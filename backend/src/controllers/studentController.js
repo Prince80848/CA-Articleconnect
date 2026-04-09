@@ -104,8 +104,8 @@ exports.uploadResume = async (req, res, next) => {
             return res.status(400).json({ success: false, message: 'No resume file uploaded' });
         }
         
-        // Use a relative URL path so it works through any proxy or domain
-        const resumeUrl = `/uploads/${req.file.filename}`;
+        // Cloudinary automatically populates req.file.path with the secure URL
+        const resumeUrl = req.file.path;
         
         // Optionally update the student profile with the latest resume URL
         await Student.findOneAndUpdate({ userId: req.user._id }, { resume: resumeUrl });

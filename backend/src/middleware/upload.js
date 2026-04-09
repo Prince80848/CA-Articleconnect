@@ -1,33 +1,52 @@
 const multer = require('multer');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('cloudinary').v2;
 const path = require('path');
-const fs = require('fs');
 
-// Ensure uploads directory exists
-const uploadDir = path.join(__dirname, '../../uploads');
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-}
+// Configure Cloudinary using existing env variables
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, uploadDir);
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: async (req, file) => {
+        const ext = path.extname(file.originalname).toLowerCase();
+        
+        // Return structured parameters based on file type
+        if (ext === '.pdf' || ext === '.doc' || ext === '.docx') {
+            return {
+                folder: 'articleconnect_resumes',
+                resource_type: 'raw', // Critical for PDFs/Docs on Cloudinary
+                public_id: `${file.fieldname}-${Date.now()}`
+            };
+        } else {
+            return {
+                folder: 'articleconnect_images',
+                allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+                public_id: `${file.fieldname}-${Date.now()}`
+            };
+        }
     },
-    filename: function (req, file, cb) {
-        cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
-    }
 });
 
 const fileFilter = (req, file, cb) => {
     const ext = path.extname(file.originalname).toLowerCase();
-    if (ext !== '.pdf' && ext !== '.doc' && ext !== '.docx') {
-        return cb(new Error('Only pdf, doc, and docx format allowed!'), false);
+    const isDocument = ['.pdf', '.doc', '.docx'].includes(ext);
+    const isImage = ['.jpg', '.jpeg', '.png', '.webp'].includes(ext);
+
+    if (isDocument || isImage) {
+        cb(null, true);
+    } else {
+        cb(new Error('Only PDFs, DOCs, and image files (JPG, PNG) are allowed!'), false);
     }
-    cb(null, true);
 };
 
 const upload = multer({
     storage: storage,
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
     fileFilter: fileFilter
 });
 

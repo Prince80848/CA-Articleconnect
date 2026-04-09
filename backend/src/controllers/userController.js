@@ -26,8 +26,13 @@ exports.updateProfile = async (req, res, next) => {
 
 exports.uploadAvatar = async (req, res, next) => {
     try {
-        // In production, upload to Cloudinary and get URL
-        const avatarUrl = req.body.avatar || '/uploads/default-avatar.png';
+        if (!req.file) {
+            return res.status(400).json({ success: false, message: 'No avatar file uploaded' });
+        }
+        
+        // req.file.path contains the secure Cloudinary URL
+        const avatarUrl = req.file.path;
+        
         const user = await User.findByIdAndUpdate(req.user._id, { avatar: avatarUrl }, { new: true });
         res.json({ success: true, data: { avatar: user.avatar }, message: 'Avatar updated' });
     } catch (error) { next(error); }

@@ -80,9 +80,10 @@ export default function Analytics() {
                     <h3 className="font-semibold text-gray-900 flex items-center gap-2 mb-4"><HiCurrencyRupee className="text-primary-600 w-5 h-5" /> Revenue</h3>
                     <div className="space-y-3">
                         <StatRow label="Active Subscriptions" value={adminStats?.activeSubscriptions ?? 0} />
-                        <StatRow label="Firm Subscriptions Revenue" value={`₹${(data?.revenue?.firmSubscriptions ?? 0).toLocaleString()}`} />
-                        <StatRow label="Student Premiums Revenue" value={`₹${(data?.revenue?.studentPremiums ?? 0).toLocaleString()}`} />
-                        <StatRow label="Total Revenue" value={`₹${(data?.revenue?.total ?? adminStats?.totalRevenue ?? 0).toLocaleString()}`} accent />
+                        <StatRow label="Firm Subscriptions Revenue" value={`₹${(data?.revenue?.firmSubscriptions ?? adminStats?.firmRevenue ?? 0).toLocaleString()}`} />
+                        <StatRow label="Student Premiums Revenue" value={`₹${(data?.revenue?.studentPremiums ?? adminStats?.studentRevenue ?? 0).toLocaleString()}`} />
+                        <StatRow label="Premium Students" value={adminStats?.premiumStudents ?? 0} />
+                        <StatRow label="Total Revenue" value={`₹${(adminStats?.totalRevenue ?? data?.revenue?.total ?? 0).toLocaleString()}`} accent />
                     </div>
                 </div>
 

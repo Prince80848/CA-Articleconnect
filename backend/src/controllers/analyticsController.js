@@ -107,6 +107,11 @@ exports.getPlatformAnalytics = async (req, res, next) => {
         const revenueByType = {};
         allPayments.forEach(p => { revenueByType[p._id] = p.total; });
 
+        // Payment types: 'subscription' = firm subscriptions, 'student_subscription' & 'premium' = student premiums
+        const firmSubscriptions = (revenueByType['subscription'] || 0) + (revenueByType['firm_subscription'] || 0);
+        const studentPremiums = (revenueByType['student_subscription'] || 0) + (revenueByType['premium'] || 0);
+        const totalRevenue = Object.values(revenueByType).reduce((a, b) => a + b, 0);
+
         res.json({
             success: true,
             data: {
@@ -123,9 +128,9 @@ exports.getPlatformAnalytics = async (req, res, next) => {
                     hired
                 },
                 revenue: {
-                    firmSubscriptions: revenueByType['firm_subscription'] || revenueByType['subscription'] || 0,
-                    studentPremiums: revenueByType['student_premium'] || revenueByType['premium'] || 0,
-                    total: Object.values(revenueByType).reduce((a, b) => a + b, 0)
+                    firmSubscriptions,
+                    studentPremiums,
+                    total: totalRevenue
                 },
                 topLocations: locationStats.map(l => ({ location: l._id, count: l.count }))
             }

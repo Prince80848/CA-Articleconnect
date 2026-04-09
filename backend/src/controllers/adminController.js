@@ -152,19 +152,30 @@ exports.getAllSubscriptions = async (req, res, next) => {
 // Admin can post jobs directly without subscription
 exports.adminPostJob = async (req, res, next) => {
     try {
-        // Find or create an admin/platform firm to own these posts
-        let firm = await Firm.findOne({ firmName: req.body.firmName || 'Platform Admin' });
+        const postedFirmName = req.body.firmName || 'Platform Admin';
+
+        // First try to find an existing firm owned by this admin user
+        let firm = await Firm.findOne({ userId: req.user._id });
+
         if (!firm) {
+            // Create a platform firm tied to the admin user
             firm = await Firm.create({
                 userId: req.user._id,
-                firmName: req.body.firmName || 'Platform Admin',
+                firmName: postedFirmName,
                 isVerified: true,
-                subscription: { status: 'active', plan: 'admin', expiryDate: new Date('2099-01-01') }
+                subscription: { status: 'active', plan: 'enterprise', expiryDate: new Date('2099-01-01') }
             });
+        } else if (req.body.firmName && firm.firmName !== req.body.firmName) {
+            // If admin specified a different name, update it for this post
+            firm.firmName = req.body.firmName;
+            await firm.save();
         }
 
+        // Remove firmName from body so it doesn't pollute Job fields
+        const { firmName, ...jobData } = req.body;
+
         const job = await Job.create({
-            ...req.body,
+            ...jobData,
             firmId: firm._id,
             status: 'active',
             isExternal: req.body.isExternal || false,
