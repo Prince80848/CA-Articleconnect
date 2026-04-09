@@ -8,7 +8,7 @@ const Firm = require('../models/Firm');
 const generateToken = (id) => jwt.sign({ id }, (process.env.JWT_SECRET || '').trim(), { expiresIn: process.env.JWT_EXPIRE ? process.env.JWT_EXPIRE.trim() : '7d' });
 const generateRefreshToken = (id) => jwt.sign({ id }, (process.env.REFRESH_TOKEN_SECRET || process.env.JWT_SECRET || '').trim(), { expiresIn: '30d' });
 
-const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+const googleClient = new OAuth2Client((process.env.GOOGLE_CLIENT_ID || '').trim());
 
 // Register
 exports.register = async (req, res, next) => {
@@ -77,7 +77,7 @@ exports.googleAuth = async (req, res, next) => {
         // Verify Google token
         const ticket = await googleClient.verifyIdToken({
             idToken,
-            audience: process.env.GOOGLE_CLIENT_ID,
+            audience: (process.env.GOOGLE_CLIENT_ID || '').trim(),
         });
         const payload = ticket.getPayload();
         const { email, name, picture } = payload;
