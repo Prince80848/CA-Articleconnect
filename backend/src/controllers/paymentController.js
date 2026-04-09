@@ -8,8 +8,8 @@ let razorpayInstance = null;
 
 function getRazorpayInstance() {
     if (!razorpayInstance) {
-        const keyId = process.env.RAZORPAY_KEY_ID;
-        const keySecret = process.env.RAZORPAY_KEY_SECRET;
+        const keyId = (process.env.RAZORPAY_KEY_ID || '').trim();
+        const keySecret = (process.env.RAZORPAY_KEY_SECRET || '').trim();
 
         if (!keyId || !keySecret) {
             console.error('RAZORPAY ERROR: Missing env variables. Found RAZORPAY_KEY_ID:', keyId ? 'SET' : 'MISSING', 'RAZORPAY_KEY_SECRET:', keySecret ? 'SET' : 'MISSING');
@@ -62,7 +62,7 @@ exports.createPayment = async (req, res, next) => {
                 razorpayOrderId: razorpayOrder.id,
                 amount: razorpayOrder.amount,
                 currency: razorpayOrder.currency,
-                keyId: process.env.RAZORPAY_KEY_ID
+                keyId: (process.env.RAZORPAY_KEY_ID || '').trim()
             },
             message: 'Payment order created'
         });
@@ -88,7 +88,7 @@ exports.verifyPayment = async (req, res, next) => {
         // Verify signature using HMAC SHA256
         const body = razorpayOrderId + '|' + razorpayPaymentId;
         const expectedSignature = crypto
-            .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+            .createHmac('sha256', (process.env.RAZORPAY_KEY_SECRET || '').trim())
             .update(body)
             .digest('hex');
 
@@ -141,5 +141,5 @@ exports.getPaymentById = async (req, res, next) => {
 
 // Endpoint to provide Razorpay key to frontend
 exports.getRazorpayKey = async (req, res) => {
-    res.json({ success: true, data: { keyId: process.env.RAZORPAY_KEY_ID } });
+    res.json({ success: true, data: { keyId: (process.env.RAZORPAY_KEY_ID || '').trim() } });
 };
