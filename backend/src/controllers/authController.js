@@ -5,8 +5,8 @@ const User = require('../models/User');
 const Student = require('../models/Student');
 const Firm = require('../models/Firm');
 
-const generateToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE || '7d' });
-const generateRefreshToken = (id) => jwt.sign({ id }, process.env.REFRESH_TOKEN_SECRET || process.env.JWT_SECRET, { expiresIn: '30d' });
+const generateToken = (id) => jwt.sign({ id }, (process.env.JWT_SECRET || '').trim(), { expiresIn: process.env.JWT_EXPIRE ? process.env.JWT_EXPIRE.trim() : '7d' });
+const generateRefreshToken = (id) => jwt.sign({ id }, (process.env.REFRESH_TOKEN_SECRET || process.env.JWT_SECRET || '').trim(), { expiresIn: '30d' });
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -160,7 +160,7 @@ exports.refreshToken = async (req, res, next) => {
         const { refreshToken } = req.body;
         if (!refreshToken) return res.status(400).json({ success: false, message: 'Refresh token required' });
 
-        const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET || process.env.JWT_SECRET);
+        const decoded = jwt.verify(refreshToken, (process.env.REFRESH_TOKEN_SECRET || process.env.JWT_SECRET || '').trim());
         const user = await User.findById(decoded.id);
         if (!user || user.refreshToken !== refreshToken) {
             return res.status(401).json({ success: false, message: 'Invalid refresh token' });

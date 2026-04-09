@@ -5,3 +5,5 @@ uploads/
 coverage/
 dist/
 build/
+
+.vercel

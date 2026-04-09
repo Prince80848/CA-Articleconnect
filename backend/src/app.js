@@ -48,8 +48,8 @@ app.use('/api', apiLimiter);
 
 app.use(cors({
     origin: process.env.NODE_ENV === 'production' 
-        ? process.env.FRONTEND_URL 
-        : (process.env.FRONTEND_URL || 'http://localhost:5173'),
+        ? process.env.FRONTEND_URL.trim()
+        : (process.env.FRONTEND_URL ? process.env.FRONTEND_URL.trim() : 'http://localhost:5173'),
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
