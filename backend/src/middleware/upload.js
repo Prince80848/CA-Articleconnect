@@ -20,7 +20,7 @@ const storage = new CloudinaryStorage({
             return {
                 folder: 'articleconnect_resumes',
                 resource_type: 'raw', // Critical for PDFs/Docs on Cloudinary
-                public_id: `${file.fieldname}-${Date.now()}`
+                public_id: `${file.fieldname}-${Date.now()}${ext}`
             };
         } else {
             return {

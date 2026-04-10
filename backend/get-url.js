@@ -1,0 +1,1 @@
+const mongoose = require('mongoose'); require('dotenv').config(); (async () => { await mongoose.connect(process.env.MONGODB_URI); const { Student } = require('./src/models'); const student = await Student.findOne({ resumeUrl: { $exists: true, $ne: '' } }); if (student) { console.log(student.resumeUrl); } else { console.log('not found'); } process.exit(0); })();
