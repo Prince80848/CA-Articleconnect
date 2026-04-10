@@ -93,15 +93,20 @@ export default function AdminManageJobs() {
 
     return (
         <div className="page-container animate-fade-in">
-            <div className="flex items-center justify-between mb-8">
-                <div><h1 className="section-title">Manage <span className="text-primary-600">All Jobs</span></h1><p className="section-subtitle">View, edit, or delete job listings and manage applicants</p></div>
-                <Link to="/admin/post-job" className="btn-primary flex items-center gap-2"><HiPlusCircle className="w-5 h-5" /> Post New Job</Link>
+            <div className="flex flex-wrap items-start justify-between gap-3 mb-8">
+                <div>
+                    <h1 className="section-title">Manage <span className="text-primary-600">All Jobs</span></h1>
+                    <p className="section-subtitle">View, edit, or delete job listings and manage applicants</p>
+                </div>
+                <Link to="/admin/post-job" className="btn-primary flex items-center gap-2 shrink-0 text-sm">
+                    <HiPlusCircle className="w-4 h-4" /> Post New Job
+                </Link>
             </div>
 
             {loading ? (
                 <div className="text-center py-16"><div className="w-7 h-7 border-2 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto"></div></div>
             ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="flex flex-col lg:grid lg:grid-cols-2 gap-6">
                     {/* Jobs List */}
                     <div className="space-y-3">
                         <h2 className="font-semibold text-gray-700 text-sm uppercase tracking-wide">Job Listings ({jobs.length})</h2>
@@ -111,13 +116,14 @@ export default function AdminManageJobs() {
                                 <p className="text-gray-500 text-sm">No jobs yet. <Link to="/admin/post-job" className="text-primary-600">Post one now</Link></p>
                             </div>
                         ) : jobs.map(job => (
-                            <div key={job._id} className={`card-hover cursor-pointer transition-all ${selectedJob === job._id ? 'ring-2 ring-primary-500' : ''}`} onClick={() => loadApplications(job._id)}>
+                            <div key={job._id} className={`card-hover cursor-pointer transition-all ${selectedJob === job._id ? 'ring-2 ring-primary-500' : ''}`}
+                                onClick={() => { loadApplications(job._id); setTimeout(() => document.getElementById('applications-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300); }}>
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3 flex-1 min-w-0">
                                         <div className="w-9 h-9 bg-primary-50 rounded-xl flex items-center justify-center shrink-0"><HiBriefcase className="w-4 h-4 text-primary-600" /></div>
                                         <div className="min-w-0">
                                             <p className="font-semibold text-gray-900 text-sm truncate">{job.title}</p>
-                                            <div className="flex items-center gap-2 text-xs text-gray-500">
+                                            <div className="flex items-center gap-2 text-xs text-gray-500 flex-wrap">
                                                 <span>{job.location}</span>
                                                 <span className="flex items-center gap-0.5"><HiUsers className="w-3 h-3" />{job.applicationsCount}</span>
                                                 {job.isExternal && <span className="flex items-center gap-0.5 text-blue-500"><HiExternalLink className="w-3 h-3" />External</span>}
@@ -140,7 +146,7 @@ export default function AdminManageJobs() {
                     </div>
 
                     {/* Applications Panel */}
-                    <div>
+                    <div id="applications-panel">
                         <h2 className="font-semibold text-gray-700 text-sm uppercase tracking-wide mb-3">
                             {selectedJob ? `Applications (${applications.length})` : 'Select a job to view applicants'}
                         </h2>
@@ -151,26 +157,26 @@ export default function AdminManageJobs() {
                                 <div className="space-y-2">
                                     {applications.map(app => (
                                         <div key={app._id} className="card p-4">
-                                            <div className="flex items-center justify-between gap-3">
-                                                <div>
-                                                    <p className="text-sm font-semibold text-gray-900">{app.applicantName || app.studentId?.userId?.name}</p>
-                                                    <p className="text-xs text-gray-500">{app.applicantEmail || app.studentId?.userId?.email}</p>
+                                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                                <div className="min-w-0">
+                                                    <p className="text-sm font-semibold text-gray-900 truncate">{app.applicantName || app.studentId?.userId?.name}</p>
+                                                    <p className="text-xs text-gray-500 truncate">{app.applicantEmail || app.studentId?.userId?.email}</p>
                                                     {app.applicantPhone && <p className="text-xs text-gray-500">{app.applicantPhone}</p>}
                                                 </div>
-                                                <div className="flex items-center gap-2 shrink-0">
+                                                <div className="flex items-center gap-2 flex-wrap shrink-0">
                                                     {app.resumeUrl && (
                                                         <ResumeButton resumeUrl={app.resumeUrl} canDownload={true} compact={true} />
                                                     )}
                                                     <StatusDropdown app={app} onUpdate={updateStatus} />
                                                 </div>
                                             </div>
-                                            {app.coverLetter && <p className="mt-2 text-xs text-gray-600 border-t pt-2">{app.coverLetter}</p>}
+                                            {app.coverLetter && <p className="mt-2 text-xs text-gray-600 border-t pt-2 line-clamp-3">{app.coverLetter}</p>}
                                         </div>
                                     ))}
                                 </div>
                             )
                         ) : (
-                            <div className="card text-center py-16"><HiEye className="w-12 h-12 text-gray-200 mx-auto mb-3" /><p className="text-gray-400 text-sm">Click a job on the left to see its applicants here</p></div>
+                            <div className="card text-center py-16 hidden lg:block"><HiEye className="w-12 h-12 text-gray-200 mx-auto mb-3" /><p className="text-gray-400 text-sm">Click a job on the left to see its applicants here</p></div>
                         )}
                     </div>
                 </div>
