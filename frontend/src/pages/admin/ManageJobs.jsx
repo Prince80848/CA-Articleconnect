@@ -158,8 +158,8 @@ export default function AdminManageJobs() {
                                                 </div>
                                                 <div className="flex items-center gap-2 shrink-0">
                                                     {app.resumeUrl && (
-                                                        <a href={app.resumeUrl} target="_blank" rel="noopener noreferrer"
-                                                            className="text-xs text-primary-600 border border-primary-200 rounded-lg px-2 py-1 hover:bg-primary-50 transition-colors">Resume</a>
+                                                        <a href={`https://docs.google.com/viewer?url=${encodeURIComponent(app.resumeUrl)}&embedded=true`} target="_blank" rel="noopener noreferrer"
+                                                            className="text-xs text-primary-600 border border-primary-200 rounded-lg px-2 py-1 hover:bg-primary-50 transition-colors">View Resume</a>
                                                     )}
                                                     <StatusDropdown app={app} onUpdate={updateStatus} />
                                                 </div>

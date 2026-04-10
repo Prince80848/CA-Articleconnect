@@ -99,9 +99,9 @@ export default function Candidates() {
 
                                     {/* Resume link */}
                                     {app.resumeUrl && (
-                                        <a href={app.resumeUrl} target="_blank" rel="noopener noreferrer"
+                                        <a href={`https://docs.google.com/viewer?url=${encodeURIComponent(app.resumeUrl)}&embedded=true`} target="_blank" rel="noopener noreferrer"
                                             className="flex items-center gap-1 text-xs text-primary-600 hover:text-primary-700 font-medium border border-primary-200 rounded-lg px-2 py-1 hover:bg-primary-50 transition-colors">
-                                            <HiDocumentText className="w-3.5 h-3.5" /> Resume
+                                            <HiDocumentText className="w-3.5 h-3.5" /> View Resume
                                         </a>
                                     )}
 
