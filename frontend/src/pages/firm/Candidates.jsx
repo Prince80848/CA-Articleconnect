@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { fetchMyApplications, updateApplicationStatus } from '../../redux/slices/applicationSlice';
 import { HiUser, HiInformationCircle, HiPhone, HiMail, HiDocumentText, HiChevronDown } from 'react-icons/hi';
 import toast from 'react-hot-toast';
+import ResumeButton from '../../components/ResumeButton';
 
 const ALL_STATUSES = ['applied', 'shortlisted', 'interviewed', 'offered', 'hired', 'rejected'];
 const statusColors = {
@@ -97,12 +98,9 @@ export default function Candidates() {
                                     {/* Editable status dropdown */}
                                     <StatusDropdown app={app} onUpdate={updateStatus} />
 
-                                    {/* Resume link */}
+                                    {/* Resume – View inline + Download for Firm */}
                                     {app.resumeUrl && (
-                                        <a href={`https://docs.google.com/viewer?url=${encodeURIComponent(app.resumeUrl)}&embedded=true`} target="_blank" rel="noopener noreferrer"
-                                            className="flex items-center gap-1 text-xs text-primary-600 hover:text-primary-700 font-medium border border-primary-200 rounded-lg px-2 py-1 hover:bg-primary-50 transition-colors">
-                                            <HiDocumentText className="w-3.5 h-3.5" /> View Resume
-                                        </a>
+                                        <ResumeButton resumeUrl={app.resumeUrl} canDownload={true} compact={true} />
                                     )}
 
                                     <button onClick={() => setExpanded(expanded === app._id ? null : app._id)}

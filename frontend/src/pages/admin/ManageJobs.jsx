@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { HiBriefcase, HiEye, HiUsers, HiPlusCircle, HiTrash, HiExternalLink, HiX, HiCheck, HiPencil } from 'react-icons/hi';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
+import ResumeButton from '../../components/ResumeButton';
 
 const ALL_STATUSES = ['applied', 'shortlisted', 'interviewed', 'offered', 'hired', 'rejected'];
 const statusColors = {
@@ -158,8 +159,7 @@ export default function AdminManageJobs() {
                                                 </div>
                                                 <div className="flex items-center gap-2 shrink-0">
                                                     {app.resumeUrl && (
-                                                        <a href={`https://docs.google.com/viewer?url=${encodeURIComponent(app.resumeUrl)}&embedded=true`} target="_blank" rel="noopener noreferrer"
-                                                            className="text-xs text-primary-600 border border-primary-200 rounded-lg px-2 py-1 hover:bg-primary-50 transition-colors">View Resume</a>
+                                                        <ResumeButton resumeUrl={app.resumeUrl} canDownload={true} compact={true} />
                                                     )}
                                                     <StatusDropdown app={app} onUpdate={updateStatus} />
                                                 </div>
