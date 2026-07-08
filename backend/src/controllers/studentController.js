@@ -107,7 +107,7 @@ exports.uploadResume = async (req, res, next) => {
         // Cloudinary automatically populates req.file.path with the secure URL
         const resumeUrl = req.file.path;
         
-        // Optionally update the student profile with the latest resume URL
+        // Update the student profile with the latest resume URL
         await Student.findOneAndUpdate({ userId: req.user._id }, { resume: resumeUrl });
 
         res.json({ 
@@ -117,3 +117,46 @@ exports.uploadResume = async (req, res, next) => {
         });
     } catch (error) { next(error); }
 };
+
+// Proxy download — fetches the Cloudinary raw URL on the server side and
+// streams it back with Content-Disposition: attachment so the browser shows
+// a Save dialog. This bypasses browser CORS restrictions on cross-origin fetch.
+exports.downloadResume = async (req, res, next) => {
+    try {
+        const { url } = req.query;
+        if (!url) return res.status(400).json({ success: false, message: 'URL required' });
+
+        const decodedUrl = decodeURIComponent(url);
+
+        // Validate the URL is a Cloudinary URL belonging to our account
+        const cloudName = (process.env.CLOUDINARY_NAME || '').trim();
+        if (!decodedUrl.startsWith('https://res.cloudinary.com/') || !decodedUrl.includes(`/${cloudName}/`)) {
+            return res.status(400).json({ success: false, message: 'Invalid resume URL' });
+        }
+
+        const https = require('https');
+        const fileUrl = new URL(decodedUrl);
+        const fileName = fileUrl.pathname.split('/').pop() || 'resume.pdf';
+
+        const proxyRequest = https.get(decodedUrl, (proxyRes) => {
+            if (proxyRes.statusCode !== 200) {
+                return res.status(502).json({ success: false, message: 'Could not fetch resume from storage' });
+            }
+
+            res.setHeader('Content-Type', proxyRes.headers['content-type'] || 'application/pdf');
+            res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+
+            if (proxyRes.headers['content-length']) {
+                res.setHeader('Content-Length', proxyRes.headers['content-length']);
+            }
+
+            proxyRes.pipe(res);
+        });
+
+        proxyRequest.on('error', (err) => {
+            console.error('Resume proxy error:', err);
+            next(err);
+        });
+    } catch (error) { next(error); }
+};
+
