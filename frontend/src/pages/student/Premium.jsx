@@ -10,12 +10,12 @@ const plans = [
         cta: 'Current Plan', disabled: true
     },
     {
-        id: 'premium', name: 'Premium', price: '299', period: '/month', icon: HiStar, color: 'text-primary-600 bg-primary-50', popular: true,
+        id: 'premium', name: 'Premium', price: '159', period: '/month', icon: HiStar, color: 'text-primary-600 bg-primary-50', popular: true,
         features: ['Unlimited applications', 'Priority in search results', 'Profile boost & higher visibility', 'Application analytics dashboard', 'Priority email support', 'Early access to new job postings', 'Application status insights'],
         cta: 'Upgrade to Premium'
     },
     {
-        id: 'pro', name: 'Pro', price: '599', period: '/month', icon: HiLightningBolt, color: 'text-amber-600 bg-amber-50',
+        id: 'pro', name: 'Pro', price: '299', period: '/month', icon: HiLightningBolt, color: 'text-amber-600 bg-amber-50',
         features: ['Everything in Premium', 'Featured profile badge ⭐', 'Direct messaging with firms', 'Resume review by CA experts', 'Interview preparation resources', 'Dedicated career support', '1-on-1 career guidance sessions', 'Priority application processing'],
         cta: 'Upgrade to Pro'
     },
@@ -30,7 +30,7 @@ const benefits = [
 
 import { useState } from 'react';
 
-const PLAN_PRICES = { premium: 299, pro: 599 };
+const PLAN_PRICES = { premium: 159, pro: 299 };
 
 export default function Premium() {
     const [upgrading, setUpgrading] = useState(null);
@@ -58,7 +58,7 @@ export default function Premium() {
                     key: keyId,
                     amount: price * 100,
                     currency: 'INR',
-                    name: 'ArticleConnect',
+                    name: 'CAHire',
                     description: `Student ${planName} Plan – 30 days`,
                     order_id: razorpayOrderId,
                     handler: function (response) {

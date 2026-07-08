@@ -1,60 +1,75 @@
 import { useState } from 'react';
-import { HiDocumentText, HiDownload, HiEye } from 'react-icons/hi';
+import { HiDownload, HiEye } from 'react-icons/hi';
+import api from '../services/api';
 
 /**
- * Converts a Cloudinary raw URL into a Google Docs Viewer URL so the PDF
- * opens inline in the browser tab instead of force-downloading.
+ * Extracts the filename from a Cloudinary URL.
+ * e.g. .../cahire_resumes/resume-1783528395958.pdf → resume-1783528395958.pdf
  */
-function getViewerUrl(url) {
-    if (!url) return null;
-    return `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
+function getFileName(url) {
+    if (!url) return 'resume.pdf';
+    const name = url.split('/').pop().split('?')[0];
+    return name || 'resume.pdf';
 }
 
 /**
- * ResumeButton – renders View and optionally Download buttons for a resume.
+ * ResumeButton – renders View and Download buttons for a resume.
  *
  * Props:
- *   resumeUrl  – the Cloudinary / raw URL stored in the database
- *   canDownload – true for firm/admin roles; shows the Download button
- *   compact    – smaller styling variant (default false)
+ *   resumeUrl   – Cloudinary raw URL stored in the database
+ *   canDownload – show Download button (true for firm/admin)
+ *   compact     – smaller styling variant (default false)
  */
 export default function ResumeButton({ resumeUrl, canDownload = false, compact = false }) {
-    const [isDownloading, setIsDownloading] = useState(false);
+    const [downloading, setDownloading] = useState(false);
 
     if (!resumeUrl) return null;
 
-    const viewerUrl = getViewerUrl(resumeUrl);
-    const btnBase = compact
-        ? 'flex items-center gap-1 text-xs font-medium border rounded-lg px-2 py-1 transition-colors relative'
-        : 'flex items-center gap-1.5 text-sm font-medium border rounded-lg px-3 py-1.5 transition-colors relative';
+    const fileName = getFileName(resumeUrl);
 
-    const handleDownload = async (e) => {
-        e.preventDefault();
+    const btnBase = compact
+        ? 'inline-flex items-center gap-1 text-xs font-medium border rounded-lg px-2 py-1 transition-colors'
+        : 'inline-flex items-center gap-1.5 text-sm font-medium border rounded-lg px-3 py-1.5 transition-colors';
+
+    /**
+     * Download via our backend proxy (/api/students/resume-download?url=…).
+     * The backend fetches the Cloudinary raw URL server-side and streams it back
+     * with Content-Disposition: attachment — zero CORS issues.
+     */
+    const handleDownload = async () => {
         try {
-            setIsDownloading(true);
-            const response = await fetch(resumeUrl);
-            const blob = await response.blob();
-            const blobUrl = window.URL.createObjectURL(blob);
+            setDownloading(true);
+            const { data } = await api.get('/students/resume-download', {
+                params: { url: encodeURIComponent(resumeUrl) },
+                responseType: 'blob',
+            });
+
+            const blobUrl = window.URL.createObjectURL(new Blob([data]));
             const link = document.createElement('a');
             link.href = blobUrl;
-            link.download = `resume-${Date.now()}.pdf`; // Force proper PDF extension
+            link.download = fileName;
             document.body.appendChild(link);
             link.click();
             link.remove();
             window.URL.revokeObjectURL(blobUrl);
-        } catch (error) {
-            console.error('Download failed natively, falling back to new tab:', error);
-            window.open(resumeUrl, '_blank');
+        } catch (err) {
+            console.error('Download failed:', err);
+            // Fallback: open in new tab so user can save manually
+            window.open(resumeUrl, '_blank', 'noopener,noreferrer');
         } finally {
-            setIsDownloading(false);
+            setDownloading(false);
         }
     };
 
     return (
         <div className="flex items-center gap-2 flex-wrap">
-            {/* View button – opens in Google Docs viewer for ALL roles */}
+            {/*
+              VIEW: Opens the Cloudinary raw URL directly in a new browser tab.
+              Chrome/Firefox/Edge have built-in PDF renderers that work perfectly
+              for any publicly accessible URL — no Google Docs Viewer needed.
+            */}
             <a
-                href={viewerUrl}
+                href={resumeUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 title="View Resume"
@@ -64,20 +79,20 @@ export default function ResumeButton({ resumeUrl, canDownload = false, compact =
                 View
             </a>
 
-            {/* Download button – only visible for firm/admin */}
+            {/* DOWNLOAD: proxy through our backend to force Content-Disposition: attachment */}
             {canDownload && (
                 <button
                     onClick={handleDownload}
-                    disabled={isDownloading}
+                    disabled={downloading}
                     title="Download Resume"
-                    className={`${btnBase} text-gray-600 border-gray-200 hover:bg-gray-50 disabled:opacity-50`}
+                    className={`${btnBase} text-gray-600 border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
-                    {isDownloading ? (
-                        <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+                    {downloading ? (
+                        <div className={`border-2 border-gray-400 border-t-transparent rounded-full animate-spin ${compact ? 'w-3.5 h-3.5' : 'w-4 h-4'}`} />
                     ) : (
                         <HiDownload className={compact ? 'w-3.5 h-3.5' : 'w-4 h-4'} />
                     )}
-                    {isDownloading ? 'Downloading...' : 'Download'}
+                    {downloading ? 'Downloading…' : 'Download'}
                 </button>
             )}
         </div>

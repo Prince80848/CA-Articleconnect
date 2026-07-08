@@ -41,7 +41,7 @@ export default function Login() {
             <div className="w-full max-w-md">
                 <div className="text-center mb-8">
                     <h1 className="text-2xl font-bold text-gray-900">Welcome Back</h1>
-                    <p className="text-gray-500 mt-1">Sign in to your ArticleConnect account</p>
+                    <p className="text-gray-500 mt-1">Sign in to your CAHire account</p>
                 </div>
                 <form onSubmit={handleSubmit} className="card space-y-5">
                     <div>
@@ -80,7 +80,6 @@ export default function Login() {
                         <GoogleLogin
                             onSuccess={handleGoogleSuccess}
                             onError={handleGoogleError}
-                            useOneTap
                             theme="outline"
                             size="large"
                             className="w-full flex justify-center"

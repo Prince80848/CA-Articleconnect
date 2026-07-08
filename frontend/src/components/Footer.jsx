@@ -6,11 +6,8 @@ export default function Footer() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                     <div>
-                        <Link to="/" className="flex items-center gap-2 mb-4">
-                            <div className="w-7 h-7 bg-primary-600 rounded-lg flex items-center justify-center">
-                                <span className="text-white text-[10px] font-bold">CA</span>
-                            </div>
-                            <span className="font-bold text-gray-900">ArticleConnect</span>
+                        <Link to="/" className="flex items-center gap-1.5 mb-4">
+                            <span className="text-xl font-extrabold text-primary-600 tracking-tight">CAHire</span>
                         </Link>
                         <p className="text-sm text-gray-500 leading-relaxed">Connecting CA students with top firms for articleship placements across India.</p>
                     </div>
@@ -41,7 +38,7 @@ export default function Footer() {
                     </div>
                 </div>
                 <div className="border-t border-gray-200 mt-10 pt-6 flex flex-col sm:flex-row justify-between items-center gap-3">
-                    <p className="text-sm text-gray-400">© 2024 ArticleConnect. All rights reserved.</p>
+                    <p className="text-sm text-gray-400">© 2025 CAHire. All rights reserved.</p>
                     <div className="flex items-center gap-4 text-sm text-gray-400">
                         <a href="#" className="hover:text-primary-600">Twitter</a>
                         <a href="#" className="hover:text-primary-600">LinkedIn</a>

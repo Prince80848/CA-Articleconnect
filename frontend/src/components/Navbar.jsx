@@ -64,11 +64,8 @@ export default function Navbar() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
                     {/* Logo */}
-                    <Link to="/" className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-                            <span className="text-white text-xs font-bold">CA</span>
-                        </div>
-                        <span className="text-lg font-bold text-gray-900">ArticleConnect</span>
+                    <Link to="/" className="flex items-center gap-1.5">
+                        <span className="text-xl font-extrabold text-primary-600 tracking-tight">CAHire</span>
                     </Link>
 
                     {/* Desktop Nav */}

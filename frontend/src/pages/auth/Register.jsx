@@ -41,7 +41,7 @@ export default function Register() {
             <div className="w-full max-w-md">
                 <div className="text-center mb-8">
                     <h1 className="text-2xl font-bold text-gray-900">Create Account</h1>
-                    <p className="text-gray-500 mt-1">Join ArticleConnect and start your journey</p>
+                    <p className="text-gray-500 mt-1">Join CAHire and start your journey</p>
                 </div>
                 <form onSubmit={handleSubmit} className="card space-y-5">
                     {/* Role Toggle */}

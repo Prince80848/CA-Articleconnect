@@ -95,7 +95,7 @@ export default function PostJob() {
                     <p className="text-gray-600 max-w-md mx-auto mb-2">
                         To post jobs and connect with CA students, you need an active subscription plan.
                     </p>
-                    <p className="text-gray-500 text-sm mb-8">Plans start from <span className="font-semibold text-gray-700">₹5,000/month</span> with a 30-day free cancellation.</p>
+                    <p className="text-gray-500 text-sm mb-8">Plans start from <span className="font-semibold text-gray-700">₹499/month</span> with a 30-day free cancellation.</p>
                     <div className="flex gap-3 justify-center">
                         <Link to="/firm/billing" className="btn-primary flex items-center gap-2">
                             <HiCreditCard className="w-4 h-4" />

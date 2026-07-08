@@ -8,8 +8,8 @@ const plans = [
     {
         id: 'startup',
         name: 'Startup',
-        price: 5000,
-        priceDisplay: '5,000',
+        price: 499,
+        priceDisplay: '499',
         color: 'border-gray-200',
         badgeColor: 'bg-gray-100 text-gray-600',
         icon: HiOfficeBuilding,
@@ -18,27 +18,17 @@ const plans = [
     {
         id: 'growth',
         name: 'Growth',
-        price: 15000,
-        priceDisplay: '15,000',
+        price: 999,
+        priceDisplay: '999',
         popular: true,
         color: 'border-primary-500',
         badgeColor: 'bg-primary-100 text-primary-700',
         icon: HiLightningBolt,
         features: ['Unlimited Job Postings', '500 Student Profiles', 'Advanced Analytics', 'Priority Support', 'Featured Listings']
     },
-    {
-        id: 'enterprise',
-        name: 'Enterprise',
-        price: 50000,
-        priceDisplay: '50,000',
-        color: 'border-purple-300',
-        badgeColor: 'bg-purple-100 text-purple-700',
-        icon: HiChip,
-        features: ['Everything in Growth', 'Unlimited Student Access', 'API Integration', 'Dedicated Account Manager', 'Custom Branding']
-    },
 ];
 
-const PLAN_LABELS = { startup: 'Startup', growth: 'Growth', enterprise: 'Enterprise' };
+const PLAN_LABELS = { startup: 'Startup', growth: 'Growth' };
 
 export default function Billing() {
     const [subscription, setSubscription] = useState(null);
@@ -75,7 +65,7 @@ export default function Billing() {
                     key: keyId,
                     amount: plan.price * 100,
                     currency: 'INR',
-                    name: 'ArticleConnect',
+                    name: 'CAHire',
                     description: `${plan.name} Plan Subscription – 30 days`,
                     order_id: razorpayOrderId,
                     handler: function (response) {
