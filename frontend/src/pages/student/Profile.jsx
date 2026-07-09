@@ -5,6 +5,8 @@ import { HiUser, HiSave, HiStar, HiLightningBolt, HiShieldCheck, HiDocumentText,
 import api from '../../services/api';
 import toast from 'react-hot-toast';
 
+const API_BASE = (import.meta.env.VITE_API_URL || '/api').replace(/\/api$/, '');
+
 
 export default function StudentProfile() {
     const { user } = useSelector(s => s.auth);
@@ -158,7 +160,7 @@ export default function StudentProfile() {
                                         <HiEye className="w-3.5 h-3.5" /> View
                                     </a>
                                     <a
-                                        href={`/api/students/resume-download?url=${encodeURIComponent(resumeUrl)}`}
+                                        href={`${API_BASE}/api/students/resume-download?url=${encodeURIComponent(resumeUrl)}`}
                                         download={resumeUrl.split('/').pop().split('?')[0] || 'resume.pdf'}
                                         target="_blank"
                                         rel="noopener noreferrer"

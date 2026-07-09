@@ -47,10 +47,29 @@ const apiLimiter = rateLimit({
 // Apply rate limiter specifically to API routes
 app.use('/api', apiLimiter);
 
+const allowedOrigins = [
+    'https://www.cahire.in',
+    'https://cahire.in',
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://localhost:3000',
+];
+// Also add any FRONTEND_URL set via env (supports comma-separated list)
+if (process.env.FRONTEND_URL) {
+    process.env.FRONTEND_URL.split(',').map(u => u.trim()).forEach(u => {
+        if (u && !allowedOrigins.includes(u)) allowedOrigins.push(u);
+    });
+}
+
 app.use(cors({
-    origin: process.env.NODE_ENV === 'production' 
-        ? process.env.FRONTEND_URL.trim()
-        : (process.env.FRONTEND_URL ? process.env.FRONTEND_URL.trim() : 'http://localhost:5173'),
+    origin: function (origin, callback) {
+        // Allow requests with no origin (e.g., mobile apps, curl, Postman)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+        return callback(new Error(`CORS: origin ${origin} not allowed`), false);
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
